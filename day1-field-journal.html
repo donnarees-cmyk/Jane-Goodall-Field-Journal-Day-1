@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 1 Field Journal: Read Like a Detective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#2b3a2a; --paper:#f1e8d2; --card:#fbf6e8; --line:#d8cba4; --muted:#5e6a50;
+  --leaf:#5c8a4a; --forest:#2f5d3a; --grass-bg:#d6e8c6; --sun:#c9a227; --sun-bg:#efe0b6;
+  --focus:#1d5fa8; --bad:#a33a2a; --bad-bg:#f2d5c3;
+  --head:Georgia,"Times New Roman",serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--paper);background-image:radial-gradient(circle at 10% 6%,rgba(92,138,74,.16) 0,transparent 36%),radial-gradient(circle at 92% 88%,rgba(92,138,74,.16) 0,transparent 40%);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.55}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--head);line-height:1.15;margin:0}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+[hidden]{display:none!important}
+
+.hero{background:var(--forest);color:#fff;padding:22px 0 0;border-bottom:6px solid var(--sun)}
+.hero .brand{font-family:var(--head);font-size:1.05rem;color:#e6f0d8;margin:0 0 4px}
+.hero .small{margin:0 0 6px;color:#cfe0c0;font-size:.95rem}
+.hero h1{font-size:clamp(1.8rem,5.2vw,2.8rem);font-weight:700}
+.hero .name{display:flex;gap:10px;align-items:center;margin:14px 0 14px;flex-wrap:wrap}
+.hero label{color:#e6f0d8}
+.hero input{font:inherit;padding:8px 12px;border-radius:8px;border:2px solid #7fa56a;background:#244a2d;color:#fff;min-width:240px}
+.hero input::placeholder{color:#a9c79a}
+#saved{font-size:.9rem;color:#cfe0c0}
+
+.phases,.substeps{display:flex;gap:4px;list-style:none;margin:0;padding:0;overflow-x:auto}
+.phases button{font:inherit;cursor:pointer;border:0;background:#3c7048;color:#e6f0d8;padding:10px 14px;border-radius:10px 10px 0 0;white-space:nowrap}
+.phases button[aria-current="step"]{background:var(--paper);color:var(--ink);font-weight:700}
+.substeps{background:var(--paper);padding:8px 0 2px}
+.substeps button{font:inherit;cursor:pointer;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:5px 12px;border-radius:999px;white-space:nowrap}
+.substeps button[aria-current="step"]{background:var(--forest);color:#fff;border-color:var(--forest);font-weight:700}
+
+.tts{background:var(--card);border-bottom:2px dotted var(--leaf);padding:8px 0}
+.tts .wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:.95rem}
+.tts select{font:inherit;padding:4px 8px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+#voiceInfo{color:var(--muted);font-size:.85rem;flex-basis:100%}
+
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:16px 0 4px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--leaf),var(--sun));transition:width .3s}
+.pt{font-size:.92rem;color:var(--muted);margin-bottom:14px}
+
+.step{padding:6px 0 10px}
+.step>h2{font-size:1.8rem;margin:6px 0 4px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--card);border:2px solid var(--line);border-left:10px solid var(--leaf);border-radius:14px;padding:16px 20px;margin-bottom:16px}
+.card h3{font-size:1.25rem;margin-bottom:6px}
+.card p{margin:.4em 0 .7em}
+.lesson{border-left-color:var(--forest)}
+.lessonhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.tip{background:var(--sun-bg);border-left:6px solid var(--sun);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0}
+.try{border-left-color:var(--sun)}
+.try>.qh3::before{content:"✏️ "}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.cols2{grid-template-columns:1fr}}
+.mini{border:2px solid var(--line);border-radius:12px;padding:10px 14px;background:#fffdf6}
+.mini b.h{display:block;font-family:var(--head);font-size:1.1rem;margin-bottom:2px}
+ul.clean{padding-left:20px;margin:6px 0}
+ul.clean li{margin-bottom:4px}
+.chipsrow{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.pill{border:2px solid var(--line);border-radius:999px;padding:3px 12px;background:#fffdf6;font-size:.95rem}
+.passage{background:#fffdf6;border:2px dashed var(--ink);border-radius:12px;padding:14px 18px;margin:12px 0;font-size:1.05rem}
+.passage .lab{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px}
+.remind{background:var(--sun-bg);border-radius:10px;padding:8px 14px;margin:0 0 16px}
+.remind summary{cursor:pointer;font-weight:700}
+.remind ul{margin:6px 0 4px;padding-left:20px}
+
+.mock{border:3px solid var(--ink);border-radius:12px;background:#fffdf6;padding:16px 18px;margin:12px 0}
+.mock h4{font-family:var(--head);font-size:1.5rem;margin:0 0 6px}
+.mock h5{font-family:var(--head);font-size:1.1rem;margin:12px 0 2px;color:var(--forest);border-bottom:2px solid var(--grass-bg)}
+.mock .sidebar{background:var(--sun-bg);border:2px solid var(--sun);border-radius:8px;padding:8px 12px;margin:10px 0;font-size:.97rem}
+.mock figure{margin:10px 0;text-align:center}
+.mock .pic{font-size:2.6rem;background:var(--grass-bg);border-radius:10px;padding:8px}
+.mock figcaption{font-size:.9rem;font-style:italic;color:var(--muted);margin-top:4px}
+.tag{display:inline-block;background:var(--ink);color:#fff;font-size:.75rem;border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.qhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.qt{font-weight:700;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts.row{flex-direction:row;flex-wrap:wrap}
+.opt{font:inherit;text-align:left;cursor:pointer;background:#fffdf6;color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:10px 14px;min-height:44px}
+.opt:hover:not(:disabled){background:var(--sun-bg);border-color:var(--sun)}
+.opt.sel{background:var(--sun-bg);border-color:var(--ink);font-weight:700}
+.opt.right{background:var(--grass-bg);border-color:var(--forest);color:var(--ink);font-weight:700;opacity:1}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad);color:var(--bad);opacity:1;text-decoration:line-through}
+.opt:disabled{cursor:default}
+.fb{margin-top:8px;font-size:.98rem}
+.fb.ok{background:var(--grass-bg);border-radius:8px;padding:8px 12px}
+.fb.no{background:var(--bad-bg);border-radius:8px;padding:8px 12px;color:#6b2518}
+
+.btn{font:inherit;cursor:pointer;border-radius:999px;border:2px solid var(--ink);background:#fffdf6;color:var(--ink);padding:7px 16px;text-decoration:none;display:inline-block}
+.btn:hover:not(:disabled){background:var(--sun-bg)}
+.btn.primary{background:var(--forest);border-color:var(--forest);color:#fff}
+.btn.primary:hover:not(:disabled){background:#3c7048}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.small{padding:3px 12px;font-size:.92rem}
+.listen{font:inherit;cursor:pointer;border:2px solid var(--forest);background:#fffdf6;color:var(--forest);border-radius:999px;padding:4px 12px;font-size:.92rem;white-space:nowrap;font-weight:700}
+.listen:hover{background:var(--grass-bg)}
+.navrow{display:flex;justify-content:space-between;gap:10px;margin:10px 0 40px}
+
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:10px 0}
+.vwrap{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.flip{font:inherit;text-align:left;cursor:pointer;border:2px solid var(--ink);border-radius:12px;padding:14px;background:#fffdf6;min-height:150px;color:var(--ink);width:100%}
+.flip .w{font-family:var(--head);font-size:1.45rem;font-weight:700}
+.flip .big{font-size:1.5rem}
+.flip .pos{font-size:.85rem;color:var(--muted)}
+.flip .back{display:none}
+.flip[aria-pressed="true"]{background:var(--grass-bg);border-color:var(--forest)}
+.flip[aria-pressed="true"] .front{display:none}
+.flip[aria-pressed="true"] .back{display:block}
+.flip .hint{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+textarea,select.f,input[type=text].f{font:inherit;color:var(--ink);width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:8px;background:#fffdf6}
+textarea{min-height:90px;resize:vertical}
+select.f{width:auto;min-width:200px}
+textarea:focus,select:focus{border-color:var(--focus)}
+label.f{display:block;font-weight:700;margin:12px 0 4px}
+.count{font-size:.9rem;color:var(--muted);margin-top:3px}
+.count.ok{color:var(--forest);font-weight:700}
+.checks{list-style:none;padding:0;margin:10px 0 0;line-height:1.8}
+.checks li::before{content:"○";display:inline-block;width:24px;color:var(--muted)}
+.checks li.ok::before{content:"✓";color:var(--forest);font-weight:700}
+.checks li.ok{color:var(--forest)}
+.conf{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:6px;align-items:center;margin:6px 0}
+.conf .c{font:inherit;cursor:pointer;border:2px solid var(--line);background:#fffdf6;border-radius:8px;padding:6px 4px;text-align:center;font-size:.92rem}
+.conf .c[aria-pressed="true"]{background:var(--grass-bg);border-color:var(--forest);font-weight:700}
+@media(max-width:600px){.conf{grid-template-columns:1fr 1fr 1fr}.conf>span{grid-column:1/-1;font-weight:700;margin-top:6px}}
+
+.result{border:3px solid var(--ink);border-radius:14px;padding:16px 18px;margin-top:16px;background:#fffdf6}
+.result .score{font-family:var(--head);font-size:2.2rem;font-weight:700}
+.sk{display:flex;justify-content:space-between;gap:10px;border-top:1px dashed var(--line);padding:6px 0;flex-wrap:wrap;align-items:center}
+.shot{border:3px solid var(--ink);border-radius:12px;background:#fffdf6;padding:18px 20px;margin-top:14px}
+.shot-head{border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:12px}
+.shot-item{margin-bottom:12px}
+.shot-item b{display:block;font-size:.95rem;color:var(--muted)}
+.shot-item p{margin:2px 0 0;white-space:pre-wrap}
+.warnbox{background:var(--sun-bg);border-left:6px solid var(--sun);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0}
+.finish{background:var(--grass-bg);border-left:6px solid var(--forest);border-radius:0 10px 10px 0;padding:14px 18px;margin-top:16px}
+.finish ol{margin:6px 0 0;padding-left:22px}
+ol.how{padding-left:22px}
+.gate{text-align:center;padding:26px 20px}
+.gate .big{font-size:3rem}
+.inkbar{background:#fffdf6;border-bottom:2px dotted var(--leaf);padding:8px 0}
+.inkbar .wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.95rem}
+.inkbar button{font:inherit;cursor:pointer;border:2px solid var(--line);background:#fffdf6;color:var(--ink);border-radius:999px;padding:4px 12px}
+.inkbar button[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+.inkbar .sw{width:28px;height:28px;padding:0;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line)}
+.inkbar .sw[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ink);background-clip:padding-box}
+.inkbar .tog{display:flex;gap:6px;align-items:center;font-weight:700}
+.inkbar .hintline{flex-basis:100%;color:var(--muted);font-size:.85rem}
+.inkcard{border-left-color:var(--sun)}
+.inkhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.inkhead .acts{display:flex;gap:6px}
+.inkhead button{font:inherit;cursor:pointer;border:2px solid var(--line);background:#fffdf6;color:var(--ink);border-radius:999px;padding:2px 10px;font-size:.9rem}
+.inkarea{position:relative;border:2px solid var(--ink);border-radius:10px;background-color:#fffffb;overflow:hidden}
+.inkarea.guide-lines{background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 31px,#cdbf93 31px,#cdbf93 32px)}
+.glabels{position:absolute;inset:0;display:grid;pointer-events:none}
+.glabels.cols{grid-auto-flow:column;grid-auto-columns:1fr}
+.glabels.grid4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.glabels span{padding:4px 8px;font-weight:700;font-size:.85rem;color:var(--muted);border-right:2px solid var(--line);border-bottom:2px solid var(--line)}
+.glabels.cols span{border-bottom:2px solid var(--line)}
+.glabels span:last-child{border-right:0}
+.glabels.grid4 span:nth-child(2n){border-right:0}
+.glabels.grid4 span:nth-child(n+3){border-bottom:0}
+.inkcv{position:absolute;left:0;top:0;touch-action:none;z-index:2}
+.inkcv.over{pointer-events:none;z-index:6}
+body.annotate .inkcv.over{pointer-events:auto;cursor:crosshair}
+.card.lesson,.passage,.mock{position:relative}
+.inknote{font-size:.85rem;color:var(--muted);margin:6px 0 0}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.phases,.substeps,.tts,.inkbar,.inkhead .acts,.navrow,.btn,.listen,.hero .name{display:none!important}.step[hidden]{display:block!important}}
+
+.std{background:#eef5ea;border-left:5px solid var(--leaf);border-radius:8px;padding:6px 12px;margin:6px 0 12px;font-size:.92rem}
+.std .row{margin:3px 0}
+.std b{color:var(--forest)}
+.std .note{color:var(--muted);font-style:italic}
+.stdcard summary{cursor:pointer;font-family:var(--head);font-weight:700;font-size:1.05rem}
+.stdtable{width:100%;border-collapse:collapse;margin-top:10px;font-size:.92rem}
+.stdtable th,.stdtable td{border:1px solid var(--line);padding:6px 8px;vertical-align:top;text-align:left}
+.stdtable th{background:var(--sun-bg)}
+.stdline{font-size:.9rem;color:var(--muted);margin-top:2px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="brand">🌿🐒🌿 Explorer’s Field Journal</p>
+    <p class="small">Grade 6 ELA · Unit 2 · Day 1 skills for “My Life with the Chimpanzees”</p>
+    <h1>Read Like a Detective 🔍</h1>
+    <div class="name">
+      <label for="studentName">Your name</label>
+      <input type="text" id="studentName" placeholder="First and last name" autocomplete="off">
+      <span id="saved" aria-live="polite"></span>
+    </div>
+    <ul class="phases" id="phases" aria-label="Parts of the tutorial"></ul>
+  </div>
+</header>
+<div class="wrap"><ul class="substeps" id="substeps" aria-label="Steps in this part"></ul></div>
+
+<div class="tts">
+  <div class="wrap">
+    <span>🔊 <b>Read aloud</b></span>
+    <label>Voice <select id="voiceSel"><option value="google">Google voice (best available)</option><option value="male">Male voice</option><option value="mixed">Mixed (teaching male, questions female)</option></select></label>
+    <label>Speed <select id="speedSel"><option value="0.85">Slow</option><option value="0.95" selected>Normal</option><option value="1.1">Fast</option></select></label>
+    <button type="button" class="btn small" id="stopBtn">⏹ Stop</button>
+    <span id="voiceInfo"></span>
+  </div>
+</div>
+
+<div class="inkbar">
+  <div class="wrap">
+    <b>✏️ Pen</b>
+    <span id="toolBtns"><button type="button" data-tool="pen" aria-pressed="true">✏️ Pen</button> <button type="button" data-tool="hl" aria-pressed="false">🖍️ Highlighter</button> <button type="button" data-tool="erase" aria-pressed="false">🧽 Eraser</button></span>
+    <span id="swatches" style="display:flex;gap:8px;align-items:center"></span>
+    <span id="sizeBtns"><button type="button" data-size="0" aria-pressed="false" aria-label="Thin">•</button> <button type="button" data-size="1" aria-pressed="true" aria-label="Medium">●</button> <button type="button" data-size="2" aria-pressed="false" aria-label="Thick">⬤</button></span>
+    <button type="button" id="undoBtn">↩️ Undo</button>
+    <label class="tog"><input type="checkbox" id="annoBox"> ✏️ Mark up the page (turn off to scroll)</label>
+    <span class="hintline">Write in the boxes with your Apple Pencil or stylus. Turn on “Mark up the page” to circle and underline on lessons and passages.</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="bar" aria-hidden="true"><i id="barfill"></i></div>
+  <div class="pt" id="ptext"></div>
+
+<!-- 0 START -->
+<section class="step" data-phase="start" data-title="Start" hidden>
+  <h2>🎯 Start here</h2>
+  <p class="lead">Today you will learn how to read a true story that a person wrote about their own life. Then you will be ready to read “My Life with the Chimpanzees.”</p>
+
+  <div class="card lesson">
+    <div class="lessonhead"><h3>How this journal works</h3><button type="button" class="listen" data-listen="card">🔊 Listen</button></div>
+    <ol class="how">
+      <li>📖 <b>Teach:</b> Learn six skills. Each lesson is short.</li>
+      <li>✏️ <b>Practice:</b> When teaching is done, you work on your own. You get help right away. Wrong? Try again!</li>
+      <li>🏆 <b>Final check:</b> Show what you know.</li>
+      <li>📸 <b>Turn it in:</b> Take a screenshot and upload it to Canvas.</li>
+    </ol>
+    <p class="tip">🔊 Tap the speaker to hear any part read aloud. ✏️ Use your Apple Pencil or stylus to write in the boxes and to mark up the lessons and passages.</p>
+  </div>
+
+  <div class="card">
+    <h3>Today I can…</h3>
+    <ul class="clean">
+      <li>📖 Tell what an <b>autobiography</b> is and how to spot one.</li>
+      <li>🧭 Find the author’s <b>purpose, message, and tone</b>.</li>
+      <li>🧩 Explain how <b>sections and text features</b> add meaning.</li>
+      <li>🌈 Explain how <b>figurative language</b> adds to tone and meaning.</li>
+      <li>🔤 Use six <b>vocabulary words</b> from the selection.</li>
+      <li>🔍 <b>Set a purpose</b> before I read.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>How confident am I right now?</h3>
+    <p>Tap one for each skill. There are no wrong answers. You will look at this again at the end.</p>
+    <div id="conf"></div>
+  </div>
+
+  <details class="card stdcard">
+    <summary>📋 Florida B.E.S.T. ELA Standards for this journal (Grade 6)</summary>
+    <p class="count">For teachers and families. These are the benchmarks the six lessons and practice sets address. Benchmark wording is quoted from Florida’s B.E.S.T. Standards for English Language Arts, Grade 6.</p>
+    <table class="stdtable"><thead><tr><th>Benchmark</th><th>What it says</th><th>Where students practice it</th></tr></thead><tbody><tr><td><b>ELA.6.R.2</b></td><td>Reading Informational Text (strand)</td><td>Autobiography<br>1 Autobiography</td></tr><tr><td><b>ELA.6.R.2.2</b></td><td>Analyze the central idea(s), implied or explicit, and its development throughout a text.</td><td>Purpose & Tone<br>2 Purpose & Tone</td></tr><tr><td><b>ELA.6.R.3.1</b></td><td>Explain how figurative language contributes to tone and meaning in text(s).</td><td>Purpose & Tone<br>Figurative Language<br>2 Purpose & Tone<br>4 Figurative</td></tr><tr><td><b>ELA.6.R.2.1</b></td><td>Explain how individual text sections and/or features convey meaning in texts.</td><td>Sections & Features<br>Purpose for Reading<br>3 Sections<br>6 Purpose for Reading</td></tr><tr><td><b>ELA.6.V.1.3</b></td><td>Apply knowledge of context clues, figurative language, word relationships, reference materials, and/or background knowledge to determine the connotative and denotative meaning of words and phrases, appropriate to grade level.</td><td>Vocabulary<br>5 Vocabulary</td></tr><tr><td><b>ELA.6.V.1.1</b></td><td>Integrate academic vocabulary appropriate to grade level in speaking and writing.</td><td>Vocabulary<br>5 Vocabulary</td></tr><tr><td><b>ELA.K12.EE.2.1</b></td><td>Read and comprehend grade-level complex texts proficiently.</td><td>Purpose for Reading<br>6 Purpose for Reading</td></tr></tbody></table>
+  </details>
+</section>
+
+<!-- 1 TEACH: AUTOBIOGRAPHY -->
+<section class="step" data-phase="teach" data-skill="genre" data-title="Autobiography" data-emoji="📖" hidden>
+  <h2>📖 Autobiography</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.2</b> Reading Informational Text (strand)</div><div class="row note">Genre: Nonfiction</div></div>
+  <div class="card lesson">
+    <div class="lessonhead"><h3>What is an autobiography?</h3><button type="button" class="listen" data-listen="card">🔊 Listen to this lesson</button></div>
+    <p>An <b>autobiography</b> is a true story about a person’s life, written <b>by that same person</b>.</p>
+    <p>“Auto” means <i>self</i>. “Bio” means <i>life</i>.</p>
+    <div class="cols2">
+      <div class="mini"><b class="h">📖 Autobiography</b>Written by the person it is about. Uses <b>I, me, my</b>.<br><i>“I was born in a small town.”</i></div>
+      <div class="mini"><b class="h">📚 Biography</b>Written by someone else. Uses <b>he, she, they</b>.<br><i>“She was born in a small town.”</i></div>
+    </div>
+    <p style="margin-top:12px"><b>Clues:</b></p>
+    <ul class="clean">
+      <li>🗣️ First person: “I.”</li>
+      <li>📅 Real events from the author’s life.</li>
+      <li>💭 The author’s thoughts and feelings.</li>
+      <li>🔙 The author looks back and shares what they learned.</li>
+    </ul>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="l-genre" data-label="✏️ Write the clues you notice" data-guide="cols" data-h="240" data-labels="Autobiography clues|Biography clues"></div><p class="inknote">Your teacher can write here during the lesson. You can write too if you want!</p></div>
+</section>
+
+<!-- 2 TEACH: PURPOSE, MESSAGE, TONE -->
+<section class="step" data-phase="teach" data-skill="purpose" data-title="Purpose & Tone" data-emoji="🧭" hidden>
+  <h2>🧭 Purpose, message, and tone</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.2.2</b> Analyze the central idea(s), implied or explicit, and its development throughout a text.</div><div class="row"><b>ELA.6.R.3.1</b> Explain how figurative language contributes to tone and meaning in text(s).</div></div>
+  <div class="card lesson">
+    <div class="lessonhead"><h3>Three big ideas</h3><button type="button" class="listen" data-listen="card">🔊 Listen to this lesson</button></div>
+    <div class="cols2">
+      <div class="mini"><b class="h">🎯 Purpose</b>WHY the author wrote it: to <b>inform</b>, <b>persuade</b>, or <b>entertain</b>. Autobiographies often inform <i>and</i> inspire.</div>
+      <div class="mini"><b class="h">💌 Message</b>The big lesson about life the author wants you to take away.</div>
+    </div>
+    <div class="mini" style="margin-top:12px"><b class="h">🎭 Tone</b>The author’s <b>attitude or feeling</b> about the topic, like how a voice sounds when it is happy, serious, or worried.</div>
+    <p style="margin-top:12px"><b>Tone words:</b></p>
+    <div class="chipsrow"><span class="pill">joyful</span><span class="pill">curious</span><span class="pill">determined</span><span class="pill">proud</span><span class="pill">hopeful</span><span class="pill">worried</span><span class="pill">gloomy</span><span class="pill">humorous</span><span class="pill">serious</span><span class="pill">respectful</span></div>
+    <p class="tip">🕵️ <b>Find tone</b> in the author’s <b>word choice</b>, the <b>details</b> they pick, and what they <b>emphasize</b>.</p>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="l-purpose" data-label="✏️ Purpose, message, and tone" data-guide="cols" data-h="240" data-labels="Purpose|Message|Tone"></div><p class="inknote">Your teacher can write here during the lesson. You can write too if you want!</p></div>
+</section>
+
+<!-- 3 TEACH: SECTIONS & FEATURES -->
+<section class="step" data-phase="teach" data-skill="features" data-title="Sections & Features" data-emoji="🧩" hidden>
+  <h2>🧩 Sections and text features</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.2.1</b> Explain how individual text sections and/or features convey meaning in texts.</div></div>
+  <div class="card lesson">
+    <div class="lessonhead"><h3>Parts that help you understand</h3><button type="button" class="listen" data-listen="card">🔊 Listen to this lesson</button></div>
+    <ul class="clean">
+      <li>🏷️ <b>Headings</b> tell what a section is mostly about.</li>
+      <li>🖼️ <b>Captions</b> explain a picture and add details.</li>
+      <li>📦 <b>Sidebars</b> give extra facts.</li>
+      <li>🔢 <b>Order of sections</b> shows how ideas are organized. In an autobiography, sections often go in time order.</li>
+    </ul>
+    <p class="tip">Ask: <b>“What does this part add to the whole text?”</b></p>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="l-features" data-label="✏️ Text features" data-guide="grid4" data-h="300" data-labels="Heading|Caption|Sidebar|Order of sections"></div><p class="inknote">Your teacher can write here during the lesson. You can write too if you want!</p></div>
+</section>
+
+<!-- 4 TEACH: FIGURATIVE LANGUAGE -->
+<section class="step" data-phase="teach" data-skill="fig" data-title="Figurative Language" data-emoji="🌈" hidden>
+  <h2>🌈 Figurative language</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.3.1</b> Explain how figurative language contributes to tone and meaning in text(s).</div></div>
+  <div class="card lesson">
+    <div class="lessonhead"><h3>Words that mean more than they say</h3><button type="button" class="listen" data-listen="card">🔊 Listen to this lesson</button></div>
+    <p>Figurative language uses words in a creative way. It adds <b>tone</b> and <b>meaning</b>.</p>
+    <div class="cols2">
+      <div class="mini"><b class="h">Simile</b>Compares with <b>like</b> or <b>as</b>. <i>“Fast as lightning.”</i></div>
+      <div class="mini"><b class="h">Metaphor</b>Says one thing <b>is</b> another. <i>“The classroom was a zoo.”</i></div>
+      <div class="mini"><b class="h">Personification</b>Gives human actions to non-human things. <i>“The sun smiled down.”</i></div>
+      <div class="mini"><b class="h">Hyperbole</b>A huge exaggeration. <i>“I’ve told you a million times.”</i></div>
+      <div class="mini"><b class="h">Idiom</b>A saying that does not mean what the words say. <i>“Break the ice.”</i></div>
+      <div class="mini"><b class="h">Alliteration</b>Repeated starting sounds. <i>“Slithering snakes slid silently.”</i></div>
+      <div class="mini"><b class="h">Onomatopoeia</b>A word that sounds like its meaning. <i>“The bacon sizzled.”</i></div>
+    </div>
+    <p class="tip">✨ <b>Ask three questions:</b> What does it literally say? What does it really mean? What feeling, or tone, does it add?</p>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="l-fig" data-label="✏️ Figurative language" data-guide="cols" data-h="340" data-labels="Type|Example|Tone it adds"></div><p class="inknote">Your teacher can write here during the lesson. You can write too if you want!</p></div>
+</section>
+
+<!-- 5 TEACH: VOCABULARY -->
+<section class="step" data-phase="teach" data-skill="vocab" data-title="Vocabulary" data-emoji="🔤" hidden>
+  <h2>🔤 Concept vocabulary</h2>
+  <p class="lead">Six words you will meet in “My Life with the Chimpanzees”</p>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.V.1.3</b> Apply knowledge of context clues, figurative language, word relationships, reference materials, and/or background knowledge to determine the connotative and denotative meaning of words and phrases, appropriate to grade level.</div><div class="row"><b>ELA.6.V.1.1</b> Integrate academic vocabulary appropriate to grade level in speaking and writing.</div></div>
+  <div class="card lesson">
+    <div class="lessonhead"><h3>Tap a card to flip it</h3></div>
+    <div class="vgrid" id="vgrid"></div>
+    <p class="tip">🧠 <b>Context clues:</b> Read the sentences around a new word. Ask, “What would make sense here?”</p>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="l-vocab" data-label="✏️ Word study" data-guide="grid4" data-h="300" data-labels="Meaning|My sentence|Clue or synonym|Quick sketch"></div><p class="inknote">Your teacher can write here during the lesson. You can write too if you want!</p></div>
+</section>
+
+<!-- 6 TEACH: PURPOSE FOR READING -->
+<section class="step" data-phase="teach" data-skill="strategy" data-title="Purpose for Reading" data-emoji="🔍" hidden>
+  <h2>🔍 Set a purpose for reading</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.2.1</b> Explain how individual text sections and/or features convey meaning in texts.</div><div class="row"><b>ELA.K12.EE.2.1</b> Read and comprehend grade-level complex texts proficiently.</div></div>
+  <div class="card lesson">
+    <div class="lessonhead"><h3>Why am I reading this?</h3><button type="button" class="listen" data-listen="card">🔊 Listen to this lesson</button></div>
+    <p>Good readers decide <b>why</b> they are reading <i>before</i> they start.</p>
+    <ol class="how">
+      <li>📌 Look at the <b>title and genre</b>. This one is nonfiction, an autobiography.</li>
+      <li>🧠 Think about what you <b>already know</b>.</li>
+      <li>❓ <b>Ask questions.</b></li>
+      <li>✍️ <b>Write your purpose:</b> <i>“I am reading to find out…”</i></li>
+    </ol>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="l-strategy" data-label="✏️ My purpose for reading" data-guide="lines" data-h="180" data-labels=""></div><p class="inknote">Your teacher can write here during the lesson. You can write too if you want!</p></div>
+</section>
+
+<!-- 7 GATE -->
+<section class="step" data-phase="practice" data-title="Your Turn" data-emoji="🚀" hidden>
+  <div class="card gate">
+    <div class="big" aria-hidden="true">🚀</div>
+    <h2>Teaching is done. Now it’s your turn!</h2>
+    <p class="lead" style="margin-top:8px">You will work <b>on your own</b> in six short practice sets. Go in order, one at a time.</p>
+    <ul class="clean" style="text-align:left;max-width:460px;margin:10px auto">
+      <li>🔊 Tap the speaker to hear any question read aloud.</li>
+      <li>✏️ Use your Apple Pencil to mark up passages or write on the scratch paper.</li>
+      <li>📌 Tap <b>“Need a reminder?”</b> if you forget something.</li>
+      <li>🤔 Wrong? Read the hint and try again.</li>
+      <li>✋ Stuck for a long time? Ask your teacher.</li>
+    </ul>
+    <button type="button" class="btn primary" id="startPractice">I’m ready! Start practice →</button>
+  </div>
+</section>
+
+<!-- 8 PRACTICE: AUTOBIOGRAPHY -->
+<section class="step" data-phase="practice" data-skill="genre" data-title="1 Autobiography" data-emoji="📖" hidden>
+  <h2>✏️ Practice 1: Autobiography</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.2</b> Reading Informational Text (strand)</div><div class="row note">Genre: Nonfiction</div></div>
+  <details class="remind"><summary>📌 Need a reminder?</summary><ul><li>Autobiography: written by the person, uses <b>I, me, my</b>.</li><li>Biography: written by someone else, uses <b>he, she, they</b>.</li></ul></details>
+  <div class="card try"><h3 class="qh3">Autobiography or biography?</h3><div data-qs="genre"></div></div>
+  <div class="card inkcard"><div class="inkbox" data-id="n-genre" data-label="✏️ Scratch paper (optional)" data-guide="lines" data-h="170" data-labels=""></div><p class="inknote">Use this space to think, draw, or jot notes.</p></div>
+</section>
+
+<!-- 9 PRACTICE: PURPOSE & TONE -->
+<section class="step" data-phase="practice" data-skill="purpose" data-title="2 Purpose & Tone" data-emoji="🧭" hidden>
+  <h2>✏️ Practice 2: Purpose, message, and tone</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.2.2</b> Analyze the central idea(s), implied or explicit, and its development throughout a text.</div><div class="row"><b>ELA.6.R.3.1</b> Explain how figurative language contributes to tone and meaning in text(s).</div></div>
+  <details class="remind"><summary>📌 Need a reminder?</summary><ul><li><b>Purpose:</b> why the author wrote it.</li><li><b>Message:</b> the big lesson about life.</li><li><b>Tone:</b> the author’s feeling. Look at word choice and details.</li></ul></details>
+  <div class="card try">
+    <h3 class="qh3">Read the passage and investigate</h3>
+    <div class="passage" id="passage1">
+      <span class="lab">Practice passage written for this tutorial (not from the selection)</span>
+      <span class="ptext">When I was nine, I trailed a family of ducks around our pond every afternoon, notebook in hand. My mother worried I would fall in. My teacher said ducks were not a real subject. But I kept writing down what I saw: which duckling swam last, who quacked first, who ignored the rain. By spring, my notebook was thicker than my math book. I did not know it then, but those muddy afternoons were my first science lessons. Years later, whenever people ask how I became a scientist, I tell them the answer is simple. I stayed curious, even when nobody believed me.</span>
+    </div>
+    <button type="button" class="listen" data-listen="passage1">🔊 Read the passage</button>
+    <div data-qs="purpose" style="margin-top:10px"></div>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="n-purpose" data-label="✏️ Scratch paper (optional)" data-guide="lines" data-h="170" data-labels=""></div><p class="inknote">Use this space to think, draw, or jot notes.</p></div>
+</section>
+
+<!-- 10 PRACTICE: SECTIONS & FEATURES -->
+<section class="step" data-phase="practice" data-skill="features" data-title="3 Sections" data-emoji="🧩" hidden>
+  <h2>✏️ Practice 3: Sections and text features</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.2.1</b> Explain how individual text sections and/or features convey meaning in texts.</div></div>
+  <details class="remind"><summary>📌 Need a reminder?</summary><ul><li><b>Heading:</b> what a section is about.</li><li><b>Caption:</b> explains a picture.</li><li><b>Sidebar:</b> an extra fact.</li><li><b>Order:</b> often time order.</li></ul></details>
+  <div class="card try">
+    <h3 class="qh3">Explore a mock article</h3>
+    <div class="mock" id="mock1">
+      <span class="tag">practice article</span>
+      <h4>A Night at Camp</h4>
+      <h5>Setting Up Camp</h5>
+      <p>Researchers arrive before sunset to put up tents and mark the trail with bright tape. Everything must be ready before dark.</p>
+      <figure><div class="pic">🔦🌲</div><figcaption>A researcher records night sounds in a field notebook.</figcaption></figure>
+      <h5>Sounds After Dark</h5>
+      <p>Once the sun sets, the forest wakes up. Frogs click, insects buzz, and something rustles in the leaves. Researchers write down each sound.</p>
+      <div class="sidebar"><b>💡 Did you know?</b> Many forest animals are most active at night.</div>
+    </div>
+    <button type="button" class="listen" data-listen="mock1">🔊 Read the article</button>
+    <div data-qs="features" style="margin-top:10px"></div>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="n-features" data-label="✏️ Scratch paper (optional)" data-guide="lines" data-h="170" data-labels=""></div><p class="inknote">Use this space to think, draw, or jot notes.</p></div>
+</section>
+
+<!-- 11 PRACTICE: FIGURATIVE LANGUAGE -->
+<section class="step" data-phase="practice" data-skill="fig" data-title="4 Figurative" data-emoji="🌈" hidden>
+  <h2>✏️ Practice 4: Figurative language</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.3.1</b> Explain how figurative language contributes to tone and meaning in text(s).</div></div>
+  <details class="remind"><summary>📌 Need a reminder?</summary><ul><li><b>Simile:</b> uses like or as.</li><li><b>Metaphor:</b> says one thing is another.</li><li><b>Personification:</b> human actions for non-human things.</li><li><b>Hyperbole:</b> a huge exaggeration.</li><li><b>Idiom:</b> a saying that does not mean what the words say.</li><li><b>Alliteration:</b> repeated starting sounds.</li><li><b>Onomatopoeia:</b> a word that sounds like its meaning.</li></ul></details>
+  <div class="card try"><h3 class="qh3">Name it, then explain the feeling</h3><div data-qs="fig"></div></div>
+  <div class="card inkcard"><div class="inkbox" data-id="n-fig" data-label="✏️ Scratch paper (optional)" data-guide="lines" data-h="170" data-labels=""></div><p class="inknote">Use this space to think, draw, or jot notes.</p></div>
+</section>
+
+<!-- 12 PRACTICE: VOCABULARY -->
+<section class="step" data-phase="practice" data-skill="vocab" data-title="5 Vocabulary" data-emoji="🔤" hidden>
+  <h2>✏️ Practice 5: Vocabulary</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.V.1.3</b> Apply knowledge of context clues, figurative language, word relationships, reference materials, and/or background knowledge to determine the connotative and denotative meaning of words and phrases, appropriate to grade level.</div><div class="row"><b>ELA.6.V.1.1</b> Integrate academic vocabulary appropriate to grade level in speaking and writing.</div></div>
+  <details class="remind"><summary>📌 Need a reminder?</summary><ul id="vremind"></ul></details>
+  <div class="card try"><h3 class="qh3">Pick the word that fits</h3><div data-qs="vocab"></div></div>
+  <div class="card">
+    <h3>✍️ Use it in your own sentences</h3>
+    <p>Pick two different words. Write one sentence for each. Make the sentence show what the word means.</p>
+    <div id="vsent"></div>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="n-vocab" data-label="✏️ Scratch paper (optional)" data-guide="lines" data-h="170" data-labels=""></div><p class="inknote">Use this space to think, draw, or jot notes.</p></div>
+</section>
+
+<!-- 13 PRACTICE: PURPOSE FOR READING -->
+<section class="step" data-phase="practice" data-skill="strategy" data-title="6 Purpose for Reading" data-emoji="🔍" hidden>
+  <h2>✏️ Practice 6: Purpose for reading</h2>
+  <div class="std">📋 <b>Florida B.E.S.T. (Grade 6):</b><div class="row"><b>ELA.6.R.2.1</b> Explain how individual text sections and/or features convey meaning in texts.</div><div class="row"><b>ELA.K12.EE.2.1</b> Read and comprehend grade-level complex texts proficiently.</div></div>
+  <details class="remind"><summary>📌 Need a reminder?</summary><ul><li>Look at the title and genre.</li><li>Think about what you already know.</li><li>Ask questions.</li><li>Write: “I am reading to find out…”</li></ul></details>
+  <div class="card try"><h3 class="qh3">Which purpose is strongest?</h3><div data-qs="strategy"></div></div>
+  <div class="card">
+    <h3>Now set your own purpose</h3>
+    <p>Use what you already know. You do not need the book for this.</p>
+    <label class="f" for="tKnow">What I already know about chimpanzees, or about people who study animals</label>
+    <textarea id="tKnow" data-t="know"></textarea>
+    <label class="f" for="tAsk">Questions I have after reading the title</label>
+    <textarea id="tAsk" data-t="ask" style="min-height:70px"></textarea>
+    <label class="f" for="tPurpose">My purpose for reading</label>
+    <div class="chipsrow" id="starters">
+      <button type="button" class="btn small">I am reading to find out</button>
+      <button type="button" class="btn small">I want to understand</button>
+      <button type="button" class="btn small">I will pay attention to how the author feels about</button>
+    </div>
+    <textarea id="tPurpose" data-t="purpose"></textarea>
+    <ul class="checks" id="pChecks">
+      <li data-c="verb">Uses a purpose phrase like “find out,” “understand,” or “learn”</li>
+      <li data-c="len">Has at least 10 words</li>
+    </ul>
+  </div>
+  <div class="card inkcard"><div class="inkbox" data-id="n-strategy" data-label="✏️ Scratch paper (optional)" data-guide="lines" data-h="170" data-labels=""></div><p class="inknote">Use this space to think, draw, or jot notes.</p></div>
+</section>
+
+<!-- 14 FINAL -->
+<section class="step" data-phase="final" data-title="Final Check" data-emoji="🏆" hidden>
+  <h2>🏆 Show what you know</h2>
+  <p class="lead">Nine questions. Tap one answer for each, then tap <b>Check my score</b>. You can retake it.</p>
+  <div class="card"><div id="final"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" id="checkFinal" type="button">Check my score</button>
+      <button class="btn" id="retakeFinal" type="button" hidden>Retake</button>
+    </div>
+    <div id="result"></div>
+  </div>
+</section>
+
+<!-- 15 TURN IN -->
+<section class="step" data-phase="turnin" data-title="Turn In" data-emoji="📸" hidden>
+  <h2>📸 Turn it in</h2>
+  <p class="lead">Take a screenshot of your work and upload it to Canvas.</p>
+  <div class="card"><h3>1. Check your work</h3><ul class="checks" id="turnChecks" aria-live="polite"></ul></div>
+  <div class="card">
+    <h3>2. Open your screenshot page</h3>
+    <p>This page puts your name, your score, and your writing in one place.</p>
+    <button class="btn primary" id="showShot" type="button">Show my work</button>
+    <div id="shot" class="shot" hidden></div>
+  </div>
+  <div class="card">
+    <h3>3. Take your screenshot 📸</h3>
+    <p>On your iPad: press the <b>top button and the volume-up button</b> at the same time. (iPad with a Home button? Press the <b>top button and Home</b>.) Tap the little picture in the corner, tap <b>Done</b>, then <b>Save to Photos</b>. Long page? Scroll and take more than one screenshot.</p>
+  </div>
+  <div class="card">
+    <h3>4. Upload it to Canvas 📤</h3>
+    <ol class="how">
+      <li>🖥️ Open Canvas and go to our class.</li>
+      <li>📁 Open this assignment.</li>
+      <li>📤 Tap <b>Submit Assignment</b>, then <b>Choose File</b>, then <b>Photo Library</b>, and pick your screenshot.</li>
+      <li>✅ Tap <b>Submit Assignment</b> again and look for the green “Submitted” message.</li>
+    </ol>
+    <p style="margin-top:10px"><a class="btn primary" id="canvasLink" target="_blank" rel="noopener" hidden>Open the Canvas assignment</a></p>
+    <div class="finish">
+      <b>🎉 Finished? Here is what to do next!</b>
+      <ol>
+        <li>✅ Make sure your screenshot is uploaded to Canvas.</li>
+        <li>🐒 Work on your <b>Vocabulary for “My Life with the Chimpanzees.”</b></li>
+        <li>📚 Then open the <b>Canvas module</b> and work on any other activities posted for you.</li>
+      </ol>
+      <p style="margin:6px 0 0">✋ Not sure what to do? Ask your teacher!</p>
+    </div>
+  </div>
+</section>
+
+  <div class="navrow">
+    <button class="btn" id="backBtn" type="button">← Back</button>
+    <button class="btn primary" id="nextBtn" type="button">Next →</button>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:30px">Teacher-made practice. The practice passages were written for this tutorial.
+    <button class="btn small" id="clearAll" type="button" style="margin-left:8px">Clear my work</button></p>
+</main>
+
+<script>
+(function(){
+  var KEY='chimp-day1-field-v2';
+  /* TEACHER: paste your Canvas assignment link between the quotes (must start with https://).
+     Or share this page as  yourpage.html?canvas=https://... */
+  var CANVAS_URL='';
+
+  var SK={genre:'Autobiography',purpose:'Purpose, message & tone',features:'Text sections & features',fig:'Figurative language',vocab:'Vocabulary',strategy:'Purpose for reading'};
+
+  var VOCAB=[
+    {w:'vanished',pos:'verb',d:'disappeared suddenly or completely',ex:'The magician vanished in a puff of smoke.',e:'💨'},
+    {w:'miserable',pos:'adjective',d:'very unhappy or uncomfortable',ex:'We felt miserable waiting in the cold rain.',e:'😩'},
+    {w:'irritable',pos:'adjective',d:'easily annoyed; grumpy',ex:'He gets irritable when he is hungry.',e:'😠'},
+    {w:'threateningly',pos:'adverb',d:'in a way that shows danger or a wish to cause harm',ex:'The dog growled threateningly at the stranger.',e:'⚠️'},
+    {w:'impetuous',pos:'adjective',d:'acting quickly without thinking first',ex:'Her impetuous choice made her late.',e:'⚡'},
+    {w:'dominate',pos:'verb',d:'to control, or to be the strongest or most powerful in a group',ex:'One player tried to dominate the whole game.',e:'👑'}
+  ];
+  var VW=['dominate','impetuous','irritable','miserable','threateningly','vanished'];
+
+  var FIG7=['Simile','Metaphor','Personification','Hyperbole','Idiom','Alliteration','Onomatopoeia'];
+  var P={
+    genre:[
+      {id:'g1',q:'“I was born in a tiny village, and I still remember the smell of the bakery.”',o:['Autobiography','Biography'],a:0,w:'The writer says “I” and tells about their own life, so it is an autobiography.'},
+      {id:'g2',q:'“He spent three years studying birds in the rainforest.”',o:['Autobiography','Biography'],a:1,w:'“He” shows someone else is telling about this person, so it is a biography.'},
+      {id:'g3',q:'“Looking back, I realize that was the moment I decided to become a scientist.”',o:['Autobiography','Biography'],a:0,w:'First person (“I”) plus the author looking back and reflecting. Autobiography!'},
+      {id:'g4',q:'“Her mother taught her to read before she started school.”',o:['Autobiography','Biography'],a:1,w:'“Her” points to a third-person writer, so it is a biography.'}
+    ],
+    purpose:[
+      {id:'p1',q:'1. How do you know this passage is an autobiography?',o:['The author uses “I” and tells about her own life.','The author uses “he” and “she.”','It lists facts about ducks.','It is a made-up story about talking animals.'],a:0,w:'First person (“I”) and real events from her own life are autobiography clues.'},
+      {id:'p2',q:'2. What is the author’s main purpose?',o:['To persuade readers to buy a notebook','To share her life story and inspire readers to stay curious','To teach readers how to do math','To make readers laugh with silly jokes'],a:1,w:'She tells about her life and ends with a lesson, so her purpose is to inform and inspire.',hint:'Look at the last two sentences.'},
+      {id:'p3',q:'3. Which tone word best describes the passage as a whole?',o:['bored and sleepy','angry and bitter','determined and hopeful','scared and confused'],a:2,w:'She keeps going even when people doubt her, and she looks back proudly. Determined and hopeful fits.'},
+      {id:'p4',q:'4. Which sentence is the best clue that the author is determined?',o:['My mother worried I would fall in.','But I kept writing down what I saw.','By spring, my notebook was thicker than my math book.','Those muddy afternoons were my first science lessons.'],a:1,w:'Her teacher doubted her, “But I kept writing” shows she did not give up. That is determination.'},
+      {id:'p5',q:'5. What is the message of the passage?',o:['Ducks are the best animals to study.','Stay curious, even when others doubt you.','Notebooks are better than math books.','Mothers worry too much.'],a:1,w:'The last line states the big lesson about life: stay curious even when nobody believes you.'}
+    ],
+    features:[
+      {id:'f1',q:'1. What does the heading “Sounds After Dark” tell the reader?',o:['The section is about what the forest sounds like at night.','The section is about how to put up a tent.','The section is about daytime animals.','The section is about the history of camping.'],a:0,w:'A heading names what the section is mostly about.'},
+      {id:'f2',q:'2. How does the caption add meaning?',o:['It repeats the heading word for word.','It tells what the researcher is doing with the night sounds.','It lists the names of the animals.','It is only decoration.'],a:1,w:'The caption adds a detail: researchers record sounds in a notebook.'},
+      {id:'f3',q:'3. Why does the author put “Setting Up Camp” before “Sounds After Dark”?',o:['It follows the order of events: get ready first, then night begins.','Headings are always in alphabetical order.','The author ran out of ideas.','So the sidebar can go at the top.'],a:0,w:'The sections are in time order, so the reader can follow what happens.'},
+      {id:'f4',q:'4. What does the “Did you know?” sidebar add?',o:['A different topic unrelated to the article','An extra fact that helps explain why the forest is so busy at night','A summary of the whole article','A funny joke'],a:1,w:'The sidebar adds a related fact that connects to the section it sits next to.'}
+    ],
+    fig:[
+      {id:'x1',q:'“The forest was a giant green cathedral.”',o:['Simile','Metaphor','Personification','Hyperbole'],a:1,w:'It says the forest IS a cathedral (no “like” or “as”). Metaphor!',hint:'Does it use “like” or “as”?'},
+      {id:'x2',q:'“The wind whispered secrets through the trees.”',o:['Simile','Metaphor','Personification','Hyperbole'],a:2,w:'Wind cannot whisper. That is a human action, so it is personification.'},
+      {id:'x3',q:'“I was so tired I could have slept for a year.”',o:['Simile','Metaphor','Personification','Hyperbole'],a:3,w:'Nobody sleeps for a year. It is a huge exaggeration, so hyperbole.'},
+      {id:'x4',q:'“Her hands shook like leaves in a storm.”',o:['Simile','Metaphor','Personification','Hyperbole'],a:0,w:'It compares hands to leaves using “like.” Simile!'},
+      {id:'x5',q:'Now the feeling: “Her hands shook like leaves in a storm” helps create a tone that feels…',o:['calm and relaxed','nervous and afraid','silly and playful','bored and tired'],a:1,w:'Shaking leaves in a storm make you picture someone very nervous or scared.'},
+      {id:'x6',q:'“After the awkward silence, Maya told a joke to break the ice.”',o:FIG7,a:4,w:'“Break the ice” does not mean breaking real ice. It is a saying that means to help people feel more comfortable. Idiom!',hint:'Does the phrase mean exactly what the words say?'},
+      {id:'x7',q:'“The slimy snake slid silently through the swamp.”',o:FIG7,a:5,w:'The “s” sound repeats at the start of many words: slimy, snake, slid, silently, swamp. Alliteration!',hint:'Say it out loud. What sound do you keep hearing?'},
+      {id:'x8',q:'“The bacon sizzled and popped in the pan.”',o:FIG7,a:6,w:'“Sizzled” and “popped” sound like the sounds they name. Onomatopoeia!',hint:'Which words sound like what they mean?'},
+      {id:'x9',q:'“Mia was feeling under the weather, so she stayed home from school.” What does “under the weather” mean?',o:['sick or not feeling well','standing outside in the rain','sad about the forecast','tired of school'],a:0,w:'It is an idiom. Staying home shows she was not feeling well, not that she was literally under the weather.',hint:'Why would someone stay home?'},
+      {id:'x10',q:'Which sentence creates a gloomier tone?',o:['The sky was gray.','The sky was a heavy gray lid pressed down on the town.'],a:1,w:'The metaphor makes the sky feel heavy and trapping, so the tone feels gloomy. “The sky was gray” only states a fact.',hint:'Which one makes you feel something?'},
+      {id:'x11',q:'“The thunder growled at the hills, and the rain drummed on our tin roof all night.” What do the words “growled” and “drummed” add?',o:['They make the storm feel loud and powerful.','They show that animals and musicians were nearby.','They make the storm sound calm and quiet.','They tell the exact time the storm started.'],a:0,w:'Growling and drumming are loud, strong sounds. The author uses them to make the storm feel powerful.',hint:'Think about how a growl and a drum sound.'},
+      {id:'x12',q:'Part A: “When the winning goal went in, our whole bench exploded like fireworks, and the gym was a roaring sea of cheers.” What tone do these comparisons create?',o:['joyful and excited','bored and tired','angry and bitter','nervous and afraid'],a:0,w:'Fireworks and a roaring sea of cheers are happy, loud, energetic pictures. The tone is joyful and excited.'},
+      {id:'x13',q:'Part B: Which phrase from the sentence best supports your answer to Part A?',o:['a roaring sea of cheers','when the winning goal went in','our whole bench','the gym'],a:0,w:'“A roaring sea of cheers” is a metaphor that paints a picture of loud, joyful celebration.',hint:'Look for the phrase that uses a comparison to show the feeling.'}
+    ],
+    vocab:[
+      {id:'v1',q:'The snow had ______ by morning. Only bare ground was left.',o:VW,a:5,w:'“Vanished” means disappeared, and the snow was gone.'},
+      {id:'v2',q:'After days of cold rain with no shelter, the campers felt ______.',o:VW,a:3,w:'Cold, wet, and no shelter would make you very unhappy: miserable.'},
+      {id:'v3',q:'My brother is ______ before breakfast, so we let him be.',o:VW,a:2,w:'“We let him be” is a clue that he is grumpy, or irritable.'},
+      {id:'v4',q:'The dog growled ______, showing its teeth.',o:VW,a:4,w:'Growling and showing teeth shows a danger. Threateningly!'},
+      {id:'v5',q:'The ______ boy jumped into the lake without checking how deep it was.',o:VW,a:1,w:'He did not think first, so he was impetuous.'},
+      {id:'v6',q:'The largest wolf tried to ______ the pack, so all the others backed away.',o:VW,a:0,w:'Trying to control the whole group is what “dominate” means.'}
+    ],
+    strategy:[
+      {id:'s1',q:'You are about to read “My Life with the Chimpanzees.” Which is the strongest purpose for reading?',o:['I am reading because it is assigned.','I am reading to finish quickly.','I am reading to find out what it was like for the author to live and work near chimpanzees, and how she feels about them.','I am reading to look at the pictures.'],a:2,w:'A strong purpose is specific. It tells what you want to find out and what to pay attention to.'}
+    ]
+  };
+
+  var FINAL=[
+    {id:'F1',sk:'genre',q:'Which sentence would most likely come from an autobiography?',o:['She was born in a small town and loved birds.','I was born in a small town, and I loved watching birds from my window.','Birds are warm-blooded animals.','The author tells about a famous bird expert.'],a:1,w:'“I” and the author’s own life point to an autobiography.'},
+    {id:'F2',sk:'purpose',q:'A writer describes her first year studying chimpanzees, shares her struggles, and ends with advice for young readers. What is her purpose?',o:['To persuade readers to take a vacation','To share her life experiences and inspire readers','To entertain readers with a made-up story','To explain how to build a tent'],a:1,w:'Sharing her life and giving advice means she informs and inspires.'},
+    {id:'F3',sk:'purpose',q:'“Rain soaked my notes, my tent leaked, and I still could not stop smiling.” What is the tone?',o:['joyful and determined','angry and bitter','bored and tired','frightened and lost'],a:0,w:'Even with problems, she is smiling. The tone is joyful and determined.'},
+    {id:'F4',sk:'purpose',q:'“Every morning I returned to the same tree, even when the monkeys ignored me. Weeks later, one finally stepped closer.” What is the message?',o:['Monkeys are shy.','Patience can lead to trust.','Trees are good meeting places.','Mornings are the best time of day.'],a:1,w:'She kept coming back, and it paid off. The message is that patience builds trust.'},
+    {id:'F5',sk:'features',q:'A heading like “The Long Wait” helps readers by…',o:['telling what the section is about and hinting at its main idea','replacing the first paragraph','listing every fact in the text','showing which words are new'],a:0,w:'Headings name the topic of a section and hint at what it will say.'},
+    {id:'F6',sk:'fig',q:'“The night was a thick black blanket.” What does this metaphor suggest?',o:['Someone left a blanket outside.','The darkness felt heavy and covered everything.','The night was warm and cozy.','Blankets are black.'],a:1,w:'A thick blanket covers everything, so the darkness feels heavy and complete.'},
+    {id:'F7',sk:'vocab',q:'“The impetuous climber leaped without testing the rope.” What does impetuous mean?',o:['careful and slow','acting quickly without thinking','very tired','friendly and kind'],a:1,w:'Leaping without testing the rope means acting without thinking first.'},
+    {id:'F8',sk:'strategy',q:'Before reading “My Life with the Chimpanzees,” which step helps you set a purpose?',o:['Skip to the last page.','Look at the title and genre, then think about what I already know and what I want to find out.','Count the pages.','Wait until the end to decide why I am reading.'],a:1,w:'Looking at the title and genre and using what you know sets a focused purpose.'},
+    {id:'F9',sk:'fig',q:'“The old house groaned and creaked as the wind howled through its broken windows.” What tone does this language create?',o:['spooky and uneasy','cheerful and playful','calm and relaxed','proud and confident'],a:0,w:'Groaned, creaked, and howled make the house sound alive and eerie. The tone is spooky and uneasy.'}
+  ];
+
+  /* where each skill is taught and practiced (step numbers) */
+  var SKLESSON={genre:1,purpose:2,features:3,fig:4,vocab:5,strategy:6};
+  var SKPRACT={genre:8,purpose:9,features:10,fig:11,vocab:12,strategy:13};
+
+  /* ---------- state ---------- */
+  var S={name:'',step:0,p:{},fin:{},finDone:false,t:{},c:{},ink:{}};
+  try{ var raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S,JSON.parse(raw)); }catch(e){}
+  ['p','fin','t','c','ink'].forEach(function(k){ S[k]=S[k]||{}; });
+  var savedEl=document.getElementById('saved'), tmr=null;
+  function save(){
+    clearTimeout(tmr);
+    tmr=setTimeout(function(){
+      try{ localStorage.setItem(KEY,JSON.stringify(S)); savedEl.textContent='Saved on this iPad'; }
+      catch(e){ savedEl.textContent='Could not save here. Do not close this page.'; }
+    },250);
+  }
+  function h(tag,attrs,kids){
+    var el=document.createElement(tag);
+    if(attrs) Object.keys(attrs).forEach(function(k){
+      if(k==='class') el.className=attrs[k];
+      else if(k==='text') el.textContent=attrs[k];
+      else if(k.slice(0,2)==='on') el.addEventListener(k.slice(2),attrs[k]);
+      else el.setAttribute(k,attrs[k]);
+    });
+    (kids||[]).forEach(function(c){ el.appendChild(c); });
+    return el;
+  }
+  function $(id){ return document.getElementById(id); }
+  function words(s){ s=(s||'').trim(); return s?s.split(/\s+/).length:0; }
+
+  /* ---------- read aloud (prefers a Google voice when the device has one) ---------- */
+  var voices=[];
+  function loadVoices(){ voices=('speechSynthesis' in window)?(window.speechSynthesis.getVoices()||[]):[]; info(); }
+  if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
+  function vScore(v,g){
+    var n=v.name, s=0;
+    if(!/^en/i.test(v.lang)) return -100;
+    if(/en[-_]US/i.test(v.lang)) s+=3;
+    var fem=/(female|samantha|ava\b|allison|aria|jenny|karen|zira|susan|serena|moira|victoria|nicky|google us english|google uk english female)/i.test(n);
+    var mal=!fem&&/(daniel|alex\b|aaron|fred\b|guy\b|davis|tom\b|david|mark\b|george|ryan|james|\bmale\b)/i.test(n);
+    if(g==='male'){ if(mal) s+=10; else if(fem) s-=10; } else { if(fem) s+=10; else if(mal) s-=10; }
+    if(/google/i.test(n)) s+=6;
+    if(/natural|neural|premium|enhanced|siri/i.test(n)) s+=8;
+    if(/compact|espeak|novelty|whisper|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|zarvox|albert|junior|kathy|ralph/i.test(n)) s-=30;
+    return s;
+  }
+  function best(g){ var b=null, bs=-999; voices.forEach(function(v){ var s=vScore(v,g); if(s>bs){ bs=s; b=v; } }); return b; }
+  function genderFor(role){ var m=$('voiceSel').value; if(m==='male') return 'male'; if(m==='mixed') return role==='q'?'female':'male'; return 'female'; }
+  function info(){
+    var v=best(genderFor('lesson')), el=$('voiceInfo');
+    if(!voices.length){ el.textContent='Read aloud uses the voices on this device.'; return; }
+    el.textContent=v&&/google/i.test(v.name)?'Using the Google voice: '+v.name+'.':'Google voices are not on this iPad, so the best natural voice here is used: '+(v?v.name:'default')+'.';
+  }
+  $('voiceSel').addEventListener('change',info);
+  function clean(t){ return (t||'').replace(/\p{Extended_Pictographic}|\uFE0F|\u200D/gu,'').replace(/\b[A-Z]{2,}\b/g,function(w){ return w==='ELA'?w:w.toLowerCase(); }).replace(/_+/g,' blank ').replace(/["“”]/g,'').replace(/\s+/g,' ').trim(); }
+  function sentence(t){ t=clean(t); if(!t) return ''; return /[.!?:;]$/.test(t)?t:t+'.'; }
+  function stopSpeech(){ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+  function speak(text,role){
+    if(!('speechSynthesis' in window)) return;
+    stopSpeech();
+    var v=best(genderFor(role)), rate=parseFloat($('speedSel').value)||0.95;
+    (text.match(/[^.!?]+[.!?]*/g)||[text]).forEach(function(c){
+      c=c.trim(); if(!c) return;
+      var u=new SpeechSynthesisUtterance(c);
+      if(v){ u.voice=v; u.lang=v.lang; } else u.lang='en-US';
+      u.rate=rate; window.speechSynthesis.speak(u);
+    });
+  }
+  $('stopBtn').addEventListener('click',stopSpeech);
+  function cardText(card){
+    var parts=[];
+    card.querySelectorAll('h3, p, li, .mini, .chipsrow').forEach(function(n){
+      if(!n.classList.contains('mini') && n.closest('.mini')) return;
+      var t;
+      if(n.classList.contains('chipsrow')){
+        t=Array.prototype.map.call(n.children,function(c){ return c.textContent.trim(); }).join(', ');
+      } else if(n.classList.contains('mini')){
+        var hd=n.querySelector('b.h');
+        t=hd ? sentence(hd.textContent)+' '+sentence(n.textContent.slice(hd.textContent.length)) : n.textContent;
+      } else { t=n.textContent; }
+      parts.push(sentence(t.replace(/Listen to this lesson|Listen/g,'')));
+    });
+    return parts.join(' ');
+  }
+  function listenBtn(getText,role,label){
+    return h('button',{type:'button',class:'listen','aria-label':'Read aloud',text:label||'🔊',onclick:function(){ speak(getText(),role||'q'); }});
+  }
+  function qSpeech(q){
+    return sentence(q.q)+' '+q.o.map(function(t,i){ return 'Choice '+String.fromCharCode(65+i)+'. '+sentence(t); }).join(' ');
+  }
+  /* wire the static "Listen" buttons in the HTML */
+  document.querySelectorAll('.listen[data-listen]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var key=b.dataset.listen, role='lesson';
+      if(key==='card'){ speak(cardText(b.closest('.card')),role); return; }
+      var el=document.getElementById(key); if(!el) return;
+      if(el.classList.contains('mock')){
+        var parts=[]; el.querySelectorAll('h4, h5, p, figcaption, .sidebar').forEach(function(n){ parts.push(sentence(n.textContent)); });
+        speak(parts.join(' '),'q');
+      } else { var pt=el.querySelector('.ptext'); speak(sentence(pt?pt.textContent:el.textContent),'q'); }
+    });
+  });
+
+  /* ---------- ink: write with an Apple Pencil or stylus ---------- */
+  var INK={tool:'pen',color:'#1b1b1b',size:1,annotate:false,penSeen:false,last:null};
+  var PEN_C=['#1b1b1b','#1d5fa8','#b3261e','#2f7d32','#7b3fa0'], HL_C=['#ffe14d','#ff9bd0','#9be564','#7fd3ff'];
+  var PEN_W=[1.6,2.6,4.5], HL_W=[12,18,26];
+  var inkAll=[], inkBoxes=[];
+  function drawStroke(ctx,W,H,s){
+    var pts=s.p; if(!pts||!pts.length) return;
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    if(s.t==='hl'){
+      ctx.save(); ctx.globalAlpha=0.35; ctx.strokeStyle=s.c; ctx.lineWidth=s.w; ctx.beginPath();
+      ctx.moveTo(pts[0][0]*W,pts[0][1]*H);
+      for(var i=1;i<pts.length;i++) ctx.lineTo(pts[i][0]*W,pts[i][1]*H);
+      if(pts.length===1) ctx.lineTo(pts[0][0]*W+0.1,pts[0][1]*H);
+      ctx.stroke(); ctx.restore(); return;
+    }
+    ctx.strokeStyle=s.c; ctx.fillStyle=s.c;
+    if(pts.length===1){ ctx.beginPath(); ctx.arc(pts[0][0]*W,pts[0][1]*H,s.w*(0.5+pts[0][2])/2,0,6.2832); ctx.fill(); return; }
+    for(var j=1;j<pts.length;j++){
+      var a=pts[j-1], b=pts[j];
+      ctx.lineWidth=s.w*(0.5+(a[2]+b[2])/2);
+      ctx.beginPath(); ctx.moveTo(a[0]*W,a[1]*H); ctx.lineTo(b[0]*W,b[1]*H); ctx.stroke();
+    }
+  }
+  function InkCanvas(host,id,overlay){
+    var cv=document.createElement('canvas'); cv.className='inkcv'+(overlay?' over':''); host.appendChild(cv);
+    var ctx=cv.getContext('2d'), strokes=S.ink[id]||(S.ink[id]=[]);
+    var W=1,H=1,dpr=Math.max(1,window.devicePixelRatio||1), cur=null, pid=null, erasing=false, changed=false;
+    function size(){
+      var r=host.getBoundingClientRect(), w=Math.max(1,Math.round(r.width)), hh=Math.max(1,Math.round(r.height));
+      if(w===W&&hh===H&&cv.width) return;
+      W=w; H=hh; cv.width=Math.round(w*dpr); cv.height=Math.round(hh*dpr); cv.style.width=w+'px'; cv.style.height=hh+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0); redraw();
+    }
+    function redraw(){ ctx.clearRect(0,0,W,H); strokes.forEach(function(s){ drawStroke(ctx,W,H,s); }); }
+    function addPoint(e,r){
+      var pr=e.pointerType==='pen'?Math.max(0.15,e.pressure||0.5):0.5;
+      var nx=(e.clientX-r.left)/W, ny=(e.clientY-r.top)/H, last=cur.p[cur.p.length-1];
+      if(last&&Math.abs(last[0]-nx)*W<1.2&&Math.abs(last[1]-ny)*H<1.2) return;
+      cur.p.push([+nx.toFixed(4),+ny.toFixed(4),+pr.toFixed(2)]);
+      if(cur.t==='hl'){ redraw(); drawStroke(ctx,W,H,cur); }
+      else if(cur.p.length>1){ drawStroke(ctx,W,H,{t:'pen',c:cur.c,w:cur.w,p:cur.p.slice(-2)}); }
+      else drawStroke(ctx,W,H,cur);
+    }
+    function eraseAt(x,y){
+      for(var i=strokes.length-1;i>=0;i--){
+        if(strokes[i].p.some(function(q){ var dx=q[0]*W-x, dy=q[1]*H-y; return dx*dx+dy*dy<196; })){ strokes.splice(i,1); changed=true; }
+      }
+      if(changed) redraw();
+    }
+    cv.addEventListener('pointerdown',function(e){
+      if(overlay&&!INK.annotate) return;
+      if(e.pointerType==='pen') INK.penSeen=true;
+      if(e.pointerType==='touch'&&INK.penSeen) return;     /* palm rejection once a Pencil is in use */
+      if(pid!==null) return;
+      e.preventDefault(); pid=e.pointerId; INK.last=inst;
+      try{ cv.setPointerCapture(pid); }catch(err){}
+      var r=cv.getBoundingClientRect();
+      if(INK.tool==='erase'){ erasing=true; changed=false; eraseAt(e.clientX-r.left,e.clientY-r.top); return; }
+      var hl=INK.tool==='hl';
+      cur={t:hl?'hl':'pen',c:INK.color,w:(hl?HL_W:PEN_W)[INK.size],p:[]};
+      addPoint(e,r);
+    });
+    cv.addEventListener('pointermove',function(e){
+      if(e.pointerId!==pid) return;
+      var r=cv.getBoundingClientRect();
+      if(erasing){ eraseAt(e.clientX-r.left,e.clientY-r.top); return; }
+      if(!cur) return;
+      var evs=(e.getCoalescedEvents&&e.getCoalescedEvents())||[]; if(!evs.length) evs=[e];
+      evs.forEach(function(ev){ addPoint(ev,r); });
+    });
+    function end(e){
+      if(e.pointerId!==pid) return;
+      if(cur&&cur.p.length){ strokes.push(cur); save(); }
+      if(erasing&&changed) save();
+      cur=null; pid=null; erasing=false; changed=false;
+    }
+    cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+    var inst={id:id,size:size,redraw:redraw,
+      undo:function(){ if(strokes.length){ strokes.pop(); redraw(); save(); } },
+      clear:function(){ strokes.length=0; redraw(); save(); }};
+    inkAll.push(inst); size();
+    if(window.ResizeObserver) new ResizeObserver(size).observe(host);
+    return inst;
+  }
+  function inkResize(){ inkAll.forEach(function(i){ i.size(); }); }
+  function inkImage(id,w,hh){
+    var strokes=S.ink[id]||[]; if(!strokes.length) return null;
+    var cv=document.createElement('canvas'); cv.width=w*2; cv.height=hh*2;
+    var ctx=cv.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,cv.width,cv.height); ctx.scale(2,2);
+    strokes.forEach(function(s){ drawStroke(ctx,w,hh,s); });
+    var img=new Image(); img.src=cv.toDataURL('image/png'); img.alt='Handwritten notes'; img.style.width='100%'; img.style.border='1px solid #d8cba4';
+    return img;
+  }
+  function initInk(){
+    /* writing boxes (teacher and students can both write in them) */
+    document.querySelectorAll('.inkbox').forEach(function(el){
+      var id=el.dataset.id, hgt=parseInt(el.dataset.h,10)||220, guide=el.dataset.guide||'lines', labels=(el.dataset.labels||'').split('|').filter(Boolean), title=el.dataset.label||'✏️ Write here';
+      var area=h('div',{class:'inkarea guide-'+guide}); area.style.height=hgt+'px';
+      if(labels.length&&(guide==='cols'||guide==='grid4')){
+        var g=h('div',{class:'glabels '+guide}); labels.forEach(function(t){ g.appendChild(h('span',{text:t})); }); area.appendChild(g);
+      }
+      var inst=null, clr=null;
+      var undoB=h('button',{type:'button',text:'↩️ Undo',onclick:function(){ inst.undo(); }});
+      clr=h('button',{type:'button',text:'🗑️ Clear',onclick:function(){
+        if(clr.dataset.armed){ inst.clear(); delete clr.dataset.armed; clr.textContent='🗑️ Clear'; }
+        else{ clr.dataset.armed='1'; clr.textContent='Tap again to erase'; setTimeout(function(){ delete clr.dataset.armed; clr.textContent='🗑️ Clear'; },3000); }
+      }});
+      el.appendChild(h('div',{class:'inkhead'},[h('b',{text:title}),h('span',{class:'acts'},[undoB,clr])]));
+      el.appendChild(area);
+      inst=InkCanvas(area,id,false);
+      inkBoxes.push({id:id,label:title.replace(/^✏️\s*/,''),h:hgt,labels:labels});
+    });
+    /* mark-up layers on top of the lessons and passages (turned on with the "Mark up the page" switch) */
+    document.querySelectorAll('.step[data-phase="teach"] .card.lesson').forEach(function(card,i){ InkCanvas(card,'ov-lesson'+i,true); });
+    ['passage1','mock1'].forEach(function(id){ var el=$(id); if(el) InkCanvas(el,'ov-'+id,true); });
+    /* tool bar */
+    function renderTools(){
+      Array.prototype.forEach.call(document.querySelectorAll('#toolBtns button'),function(b){ b.setAttribute('aria-pressed',b.dataset.tool===INK.tool?'true':'false'); });
+      Array.prototype.forEach.call(document.querySelectorAll('#sizeBtns button'),function(b){ b.setAttribute('aria-pressed',parseInt(b.dataset.size,10)===INK.size?'true':'false'); });
+      var sw=$('swatches'); sw.innerHTML='';
+      if(INK.tool==='erase'){ sw.appendChild(document.createTextNode('Drag over a mark to erase it')); return; }
+      var cols=INK.tool==='hl'?HL_C:PEN_C; if(cols.indexOf(INK.color)<0) INK.color=cols[0];
+      cols.forEach(function(c){
+        var b=h('button',{type:'button',class:'sw','aria-label':'Color '+c,'aria-pressed':c===INK.color?'true':'false'}); b.style.background=c;
+        b.addEventListener('click',function(){ INK.color=c; renderTools(); }); sw.appendChild(b);
+      });
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('#toolBtns button'),function(b){ b.addEventListener('click',function(){ INK.tool=b.dataset.tool; renderTools(); }); });
+    Array.prototype.forEach.call(document.querySelectorAll('#sizeBtns button'),function(b){ b.addEventListener('click',function(){ INK.size=parseInt(b.dataset.size,10); renderTools(); }); });
+    $('undoBtn').addEventListener('click',function(){ if(INK.last) INK.last.undo(); });
+    $('annoBox').addEventListener('change',function(){ INK.annotate=this.checked; document.body.classList.toggle('annotate',this.checked); });
+    renderTools();
+  }
+
+  /* ---------- name ---------- */
+  var nameEl=$('studentName'); nameEl.value=S.name||'';
+  nameEl.addEventListener('input',function(){ S.name=nameEl.value; save(); turnChecks(); });
+
+  /* ---------- steps: parts and sub-steps ---------- */
+  var steps=Array.prototype.slice.call(document.querySelectorAll('.step'));
+  var PH=[{id:'start',label:'🎯 Start'},{id:'teach',label:'📖 Teach'},{id:'practice',label:'✏️ Practice'},{id:'final',label:'🏆 Final'},{id:'turnin',label:'📸 Turn in'}];
+  var phasesEl=$('phases'), subEl=$('substeps');
+  PH.forEach(function(p){
+    var first=steps.findIndex(function(s){ return s.dataset.phase===p.id; });
+    var b=h('button',{type:'button','data-ph':p.id,text:p.label});
+    b.addEventListener('click',function(){ show(first); });
+    phasesEl.appendChild(h('li',{},[b]));
+  });
+  function show(i){
+    i=Math.max(0,Math.min(steps.length-1,i));
+    stopSpeech();
+    steps.forEach(function(s,j){ s.hidden=j!==i; });
+    var ph=steps[i].dataset.phase;
+    Array.prototype.forEach.call(phasesEl.querySelectorAll('button'),function(b){ if(b.dataset.ph===ph) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
+    subEl.innerHTML='';
+    var mine=[]; steps.forEach(function(s,j){ if(s.dataset.phase===ph) mine.push(j); });
+    if(mine.length>1){
+      mine.forEach(function(j){
+        var t=(steps[j].dataset.emoji||'🚀')+' '+(steps[j].dataset.title||'');
+        var b=h('button',{type:'button',text:t,'aria-label':'Step '+(j+1)+': '+steps[j].dataset.title});
+        if(j===i) b.setAttribute('aria-current','step');
+        b.addEventListener('click',function(){ show(j); });
+        subEl.appendChild(h('li',{},[b]));
+      });
+    }
+    $('backBtn').disabled=i===0; $('nextBtn').disabled=i===steps.length-1;
+    S.step=i; save(); window.scrollTo({top:0}); if(i===steps.length-1) turnChecks(); setTimeout(inkResize,0);
+  }
+  $('backBtn').addEventListener('click',function(){ show(S.step-1); });
+  $('nextBtn').addEventListener('click',function(){ show(S.step+1); });
+  $('startPractice').addEventListener('click',function(){ show(SKPRACT.genre); });
+
+  /* ---------- confidence ---------- */
+  var CL=['😬 New to me','🙂 Getting it','😎 Got it'];
+  var conf=$('conf');
+  Object.keys(SK).forEach(function(k){
+    var row=h('div',{class:'conf'},[h('span',{text:SK[k]})]);
+    CL.forEach(function(lab,n){
+      var b=h('button',{type:'button',class:'c','aria-pressed':S.c[k]===n?'true':'false',text:lab});
+      b.addEventListener('click',function(){
+        S.c[k]=n; Array.prototype.forEach.call(row.querySelectorAll('.c'),function(x,m){ x.setAttribute('aria-pressed',m===n?'true':'false'); }); save();
+      });
+      row.appendChild(b);
+    });
+    conf.appendChild(row);
+  });
+
+  /* ---------- practice questions ---------- */
+  function renderQ(q){
+    var st=S.p[q.id]||(S.p[q.id]={tries:0,done:false,first:false,wrong:[]});
+    var opts=h('div',{class:'opts'+(q.o.length>4?' row':'')});
+    var fb=h('div',{class:'fb','aria-live':'polite'});
+    function lock(){ Array.prototype.forEach.call(opts.querySelectorAll('button'),function(x){ x.disabled=true; }); }
+    q.o.forEach(function(txt,i){
+      var b=h('button',{type:'button',class:'opt',text:txt});
+      if(st.wrong.indexOf(i)>-1){ b.classList.add('wrong'); b.disabled=true; }
+      if(st.done&&i===q.a) b.classList.add('right');
+      b.addEventListener('click',function(){
+        if(st.done) return;
+        st.tries++;
+        if(i===q.a){ st.done=true; st.first=(st.tries===1); b.classList.add('right'); fb.className='fb ok'; fb.textContent='✅ '+q.w+(st.first?' ⭐ First try!':''); lock(); }
+        else{ st.wrong.push(i); b.classList.add('wrong'); b.disabled=true; fb.className='fb no'; fb.textContent='🤔 Not quite. Try another answer.'+(q.hint?' Hint: '+q.hint:''); }
+        save(); progress();
+      });
+      opts.appendChild(b);
+    });
+    if(st.done){ fb.className='fb ok'; fb.textContent='✅ '+q.w+(st.first?' ⭐ First try!':''); lock(); }
+    return h('div',{class:'q'},[h('div',{class:'qhead'},[h('p',{class:'qt',text:q.q}),listenBtn(function(){ return qSpeech(q); },'q')]),opts,fb]);
+  }
+  document.querySelectorAll('[data-qs]').forEach(function(box){
+    P[box.dataset.qs].forEach(function(q){ box.appendChild(renderQ(q)); });
+  });
+
+  /* ---------- vocabulary ---------- */
+  var vg=$('vgrid');
+  VOCAB.forEach(function(v){
+    var flip=h('button',{type:'button',class:'flip','aria-pressed':'false'},[
+      h('div',{class:'front'},[h('div',{class:'big',text:v.e}),h('div',{class:'w',text:v.w}),h('div',{class:'pos',text:v.pos}),h('div',{class:'hint',text:'Tap to flip'})]),
+      h('div',{class:'back'},[h('div',{class:'w',text:v.w}),h('p',{text:'Means: '+v.d}),h('p',{text:'Example: '+v.ex})])
+    ]);
+    flip.addEventListener('click',function(){ flip.setAttribute('aria-pressed',flip.getAttribute('aria-pressed')==='true'?'false':'true'); });
+    vg.appendChild(h('div',{class:'vwrap'},[flip,listenBtn(function(){ return v.w+'. '+v.pos+'. Means '+sentence(v.d)+' Example. '+sentence(v.ex); },'lesson','🔊 Hear it')]));
+  });
+  var vr=$('vremind');
+  VOCAB.forEach(function(v){ vr.appendChild(h('li',{},[h('b',{text:v.w}),document.createTextNode(': '+v.d)])); });
+  var vs=$('vsent');
+  [1,2].forEach(function(n){
+    var sel=h('select',{class:'f','aria-label':'Word for sentence '+n});
+    sel.appendChild(h('option',{value:'',text:'Pick a word'}));
+    VW.forEach(function(w){ sel.appendChild(h('option',{value:w,text:w})); });
+    var ta=h('textarea',{'aria-label':'Sentence '+n,style:'min-height:70px',placeholder:'Write your sentence here'});
+    var fb=h('div',{class:'count'});
+    sel.value=S.t['vw'+n]||''; ta.value=S.t['vs'+n]||'';
+    function chk(){
+      var w=sel.value, s=ta.value;
+      if(!w){ fb.textContent=''; fb.className='count'; return; }
+      var uses=new RegExp('\\b'+w+'\\b','i').test(s), long=words(s)>=6;
+      fb.className='count'+(uses&&long?' ok':'');
+      fb.textContent=uses&&long?'✅ Nice! You used “'+w+'” in a full sentence.':(!uses?'Use the word “'+w+'” in your sentence.':'Add more detail. Aim for at least 6 words.');
+    }
+    sel.addEventListener('change',function(){ S.t['vw'+n]=sel.value; chk(); save(); });
+    ta.addEventListener('input',function(){ S.t['vs'+n]=ta.value; chk(); progress(); save(); });
+    chk();
+    vs.appendChild(h('div',{style:'margin-bottom:14px'},[h('label',{class:'f',text:'Sentence '+n}),sel,h('div',{style:'height:6px'}),ta,fb]));
+  });
+
+  /* ---------- free text ---------- */
+  document.querySelectorAll('[data-t]').forEach(function(el){
+    var k=el.dataset.t; if(S.t[k]!=null) el.value=S.t[k];
+    el.addEventListener('input',function(){ S.t[k]=el.value; checkPurpose(); progress(); save(); });
+  });
+  document.querySelectorAll('#starters button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var ta=$('tPurpose'); ta.value=(ta.value&&!/\s$/.test(ta.value)?ta.value+' ':ta.value)+b.textContent+' ';
+      ta.focus(); ta.dispatchEvent(new Event('input'));
+    });
+  });
+  function purposeOK(){ var s=S.t.purpose||''; return {verb:/\b(find out|understand|learn|figure out|discover)\b/i.test(s),len:words(s)>=10}; }
+  function checkPurpose(){
+    var r=purposeOK();
+    document.querySelectorAll('#pChecks li').forEach(function(li){ li.className=r[li.dataset.c]?'ok':''; });
+  }
+
+  /* ---------- final check ---------- */
+  function renderFinal(){
+    var box=$('final'); box.innerHTML='';
+    FINAL.forEach(function(q,n){
+      var opts=h('div',{class:'opts'});
+      q.o.forEach(function(txt,i){
+        var b=h('button',{type:'button',class:'opt',text:txt});
+        if(S.fin[q.id]===i) b.classList.add('sel');
+        if(S.finDone){
+          b.disabled=true;
+          if(i===q.a){ b.classList.remove('sel'); b.classList.add('right'); }
+          else if(S.fin[q.id]===i){ b.classList.remove('sel'); b.classList.add('wrong'); }
+        }
+        b.addEventListener('click',function(){
+          if(S.finDone) return;
+          S.fin[q.id]=i;
+          Array.prototype.forEach.call(opts.querySelectorAll('button'),function(x,m){ x.classList.toggle('sel',m===i); });
+          updateCheckBtn(); save();
+        });
+        opts.appendChild(b);
+      });
+      var kids=[h('div',{class:'qhead'},[h('p',{class:'qt',text:(n+1)+'. '+q.q}),listenBtn(function(){ return qSpeech(q); },'q')]),opts];
+      if(S.finDone){ var ok=S.fin[q.id]===q.a; kids.push(h('div',{class:'fb '+(ok?'ok':'no'),text:(ok?'✅ ':'❌ ')+q.w})); }
+      box.appendChild(h('div',{class:'q'},kids));
+    });
+    updateCheckBtn(); renderResult();
+  }
+  function updateCheckBtn(){
+    var all=FINAL.every(function(q){ return S.fin[q.id]!=null; });
+    $('checkFinal').disabled=!all||S.finDone;
+    $('checkFinal').hidden=S.finDone; $('retakeFinal').hidden=!S.finDone;
+  }
+  function finalScore(){
+    var by={}, tot=0;
+    FINAL.forEach(function(q){ by[q.sk]=by[q.sk]||{c:0,n:0}; by[q.sk].n++; if(S.fin[q.id]===q.a){ by[q.sk].c++; tot++; } });
+    return {tot:tot,by:by};
+  }
+  function renderResult(){
+    var r=$('result'); r.innerHTML='';
+    if(!S.finDone) return;
+    var f=finalScore();
+    var msg=f.tot>=Math.ceil(FINAL.length*0.85)?'🏆 Awesome! You really know your stuff!':(f.tot>=Math.ceil(FINAL.length*0.6)?'💪 Almost there! Review the skills marked below, then retake.':'🔁 Let’s review! Re-read the lessons marked below and try again.');
+    var box=h('div',{class:'result'},[h('div',{class:'score',text:f.tot+' / '+FINAL.length}),h('p',{text:msg})]);
+    Object.keys(f.by).forEach(function(k){
+      var row=h('div',{class:'sk'},[h('span',{text:SK[k]+': '+f.by[k].c+' of '+f.by[k].n})]);
+      if(f.by[k].c<f.by[k].n){
+        var btns=h('span',{},[
+          h('button',{type:'button',class:'btn small',text:'📖 Re-read the lesson',onclick:function(){ show(SKLESSON[k]); }}),
+          document.createTextNode(' '),
+          h('button',{type:'button',class:'btn small',text:'✏️ Practice again',onclick:function(){ show(SKPRACT[k]); }})
+        ]);
+        row.appendChild(btns);
+      }
+      box.appendChild(row);
+    });
+    r.appendChild(box);
+  }
+  $('checkFinal').addEventListener('click',function(){ S.finDone=true; save(); renderFinal(); progress(); $('result').scrollIntoView({behavior:'smooth'}); });
+  $('retakeFinal').addEventListener('click',function(){ S.fin={}; S.finDone=false; save(); renderFinal(); progress(); });
+
+  /* ---------- progress ---------- */
+  function allPractice(){ var a=[]; Object.keys(P).forEach(function(k){ P[k].forEach(function(q){ a.push(q); }); }); return a; }
+  function progress(){
+    var pr=allPractice(), done=0;
+    pr.forEach(function(q){ if(S.p[q.id]&&S.p[q.id].done) done++; });
+    var total=pr.length+2;
+    if(S.finDone) done++;
+    var r=purposeOK(); if(r.verb&&r.len) done++;
+    $('barfill').style.width=Math.round(done/total*100)+'%';
+    $('ptext').textContent=done+' of '+total+' practice tasks finished';
+  }
+
+  /* ---------- turn in ---------- */
+  function turnChecks(){
+    var ul=$('turnChecks'); ul.innerHTML='';
+    var pr=allPractice(), d=0; pr.forEach(function(q){ if(S.p[q.id]&&S.p[q.id].done) d++; });
+    var r=purposeOK();
+    [[(S.name||'').trim()?'My name is at the top of the page':'Add your name at the top of the page',!!(S.name||'').trim()],
+     ['Practice questions: '+d+' of '+pr.length+' finished',d===pr.length],
+     ['Purpose for reading written',r.verb&&r.len],
+     ['Final check taken'+(S.finDone?': '+finalScore().tot+' of '+FINAL.length:''),!!S.finDone]
+    ].forEach(function(c){ ul.appendChild(h('li',{class:c[1]?'ok':'',text:c[0]})); });
+  }
+  $('showShot').addEventListener('click',function(){
+    var box=$('shot'); box.innerHTML=''; box.hidden=false;
+    var nm=(S.name||'').trim();
+    var pr=allPractice(), d=0; pr.forEach(function(q){ if(S.p[q.id]&&S.p[q.id].done) d++; });
+    box.appendChild(h('div',{class:'shot-head'},[
+      h('h3',{text:'Day 1 Field Journal: “My Life with the Chimpanzees”'}),
+      h('div',{text:'Name: '+(nm||'(add your name at the top of the page)')}),
+      h('div',{text:new Date().toLocaleString()}),h('div',{class:'stdline',text:'Florida B.E.S.T. standards practiced: ELA.6.R.2, ELA.6.R.2.2, ELA.6.R.3.1, ELA.6.R.2.1, ELA.6.V.1.3, ELA.6.V.1.1, ELA.K12.EE.2.1'}),
+      h('div',{text:'Practice questions finished: '+d+' of '+pr.length})
+    ]));
+    if(!nm) box.appendChild(h('div',{class:'warnbox',text:'Your name is missing. Scroll up, add it, then tap “Show my work” again before you take your screenshot.'}));
+    function item(label,val){ if(val&&String(val).trim()) box.appendChild(h('div',{class:'shot-item'},[h('b',{text:label}),h('p',{text:val})])); }
+    var cl=Object.keys(SK).map(function(k){ return SK[k]+': '+(S.c[k]!=null?CL[S.c[k]]:'(not marked)'); }).join('\n');
+    item('How I felt at the start',cl);
+    var ft=Object.keys(P).map(function(k){ var n=0; P[k].forEach(function(q){ if(S.p[q.id]&&S.p[q.id].first) n++; }); return SK[k]+': '+n+' of '+P[k].length+' right on the first try'; }).join('\n');
+    item('Practice results',ft);
+    if(S.finDone){
+      var f=finalScore();
+      item('Final check score',f.tot+' of '+FINAL.length+'\n'+Object.keys(f.by).map(function(k){ return SK[k]+': '+f.by[k].c+' of '+f.by[k].n; }).join('\n'));
+    }else{
+      item('Final check','Not taken yet');
+    }
+    item('Vocabulary sentence 1',S.t.vw1&&S.t.vs1?S.t.vw1+': '+S.t.vs1:'');
+    item('Vocabulary sentence 2',S.t.vw2&&S.t.vs2?S.t.vw2+': '+S.t.vs2:'');
+    item('What I already know',S.t.know);
+    item('Questions I have',S.t.ask);
+    item('My purpose for reading',S.t.purpose);
+    var noted=inkBoxes.filter(function(b){ return S.ink[b.id]&&S.ink[b.id].length; });
+    if(noted.length){
+      box.appendChild(h('div',{class:'shot-item'},[h('b',{text:'My handwritten notes'})]));
+      noted.forEach(function(b){
+        var img=inkImage(b.id,700,b.h);
+        if(img) box.appendChild(h('div',{class:'shot-item'},[h('b',{text:b.label+(b.labels.length?' ('+b.labels.join(' | ')+')':'')}),img]));
+      });
+    }
+    box.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  (function(){
+    var url=CANVAS_URL, q=null;
+    try{ q=new URLSearchParams(location.search).get('canvas'); }catch(e){}
+    if(!url&&q) url=q;
+    var a=$('canvasLink');
+    if(url&&/^https:\/\//i.test(url)){ a.href=url; a.hidden=false; }
+  })();
+
+  /* ---------- clear ---------- */
+  var cb=$('clearAll'), ct=null;
+  cb.addEventListener('click',function(){
+    if(cb.dataset.armed){ try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); }
+    else{ cb.dataset.armed='1'; cb.textContent='Click again to erase everything'; ct=setTimeout(function(){ delete cb.dataset.armed; cb.textContent='Clear my work'; },4000); }
+  });
+
+  /* ---------- init ---------- */
+  renderFinal(); checkPurpose(); progress(); info(); initInk();
+  show(S.step||0);
+})();
+</script>
+</body>
+</html>
